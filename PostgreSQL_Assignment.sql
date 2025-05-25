@@ -15,10 +15,8 @@ CREATE TABLE species (
     common_name VARCHAR(100) NOT NULL,
     scientific_name VARCHAR(150) NOT NULL,
     discovery_date DATE NOT NULL,
-    conservation_status VARCHAR(50) 
+    conservation_status VARCHAR(50)
 );
-
-DROP Table species CASCADE;
 
 -- sightings
 CREATE TABLE sightings (
@@ -29,6 +27,19 @@ CREATE TABLE sightings (
     sighting_time TIMESTAMP NOT NULL DEFAULT NOW(),
     notes TEXT
 );
+
+
+
+
+-- Drop Table
+DROP TABLE species CASCADE;
+
+DROP TABLE rangers CASCADE;
+
+DROP TABLE sightings CASCADE;
+
+
+
 
 -- Insert into rangers
 INSERT INTO
@@ -126,71 +137,92 @@ VALUES (
         NULL
     );
 
+
+
+
+
 SELECT * FROM rangers;
 
 SELECT * FROM species;
 
 SELECT * FROM sightings;
 
--- Problem 1 
+
+
+
+
+
+-- Problem 1
 INSERT INTO
     rangers (name, region)
 VALUES ('Derek Fox', 'Coastal Plains');
 
--- Problem 2 
+
+-- Problem 2
 SELECT count(DISTINCT species_id) AS unique_species_count
 FROM sightings;
 
--- Problem 3 
+
+-- Problem 3
 SELECT * FROM sightings WHERE "location" LIKE '%Pass%';
 
 
--- problem 4 
+-- problem 4
 SELECT rangers.name, COUNT(sightings.sighting_id) AS total_sightings
 FROM rangers
-LEFT JOIN sightings ON rangers.ranger_id = sightings.ranger_id
-GROUP BY rangers.name;
+    LEFT JOIN sightings ON rangers.ranger_id = sightings.ranger_id
+GROUP BY
+    rangers.name;
 
 
--- problem 5 
-
+-- problem 5
 SELECT species.common_name
 FROM species
-LEFT JOIN sightings ON species.species_id = sightings.species_id
-WHERE sightings.sighting_id IS NULL;
+    LEFT JOIN sightings ON species.species_id = sightings.species_id
+WHERE
+    sightings.sighting_id IS NULL;
 
 
-
--- Problem 6 
-SELECT *
-FROM sightings
-ORDER BY sighting_time DESC
-LIMIT 2;
+-- Problem 6
+SELECT * FROM sightings 
+    ORDER BY sighting_time DESC LIMIT 2;
 
 
-
--- Problem 7 
+-- Problem 7
 UPDATE species
-SET conservation_status = 'Historic'
-WHERE EXTRACT(YEAR FROM discovery_date) < 1800;
+SET
+    conservation_status = 'Historic'
+WHERE
+    EXTRACT(
+        YEAR
+        FROM discovery_date
+    ) < 1800;
 
 
--- problem 8 : 
 
-SELECT sighting_id,
-       CASE 
-           WHEN EXTRACT(HOUR FROM sighting_time) < 12 THEN 'Morning'
-           WHEN EXTRACT(HOUR FROM sighting_time) < 18 THEN 'Afternoon'
-           ELSE 'Evening'
-       END AS time_of_day
+-- problem 8 
+SELECT
+    sighting_id,
+    CASE
+        WHEN EXTRACT(
+            HOUR
+            FROM sighting_time
+        ) < 12 THEN 'Morning'
+        WHEN EXTRACT(
+            HOUR
+            FROM sighting_time
+        ) < 18 THEN 'Afternoon'
+        ELSE 'Evening'
+    END AS time_of_day
 FROM sightings;
 
 
--- Problem 9  Delete rangers who have never sighted any species
-DELETE FROM rangers
-WHERE ranger_id NOT IN (
-    SELECT DISTINCT ranger_id
-    FROM sightings
-);
 
-SELECT * FROM rangers;
+-- Problem 9
+DELETE FROM rangers
+WHERE
+    ranger_id NOT IN (
+        SELECT DISTINCT
+            ranger_id
+        FROM sightings
+    );
